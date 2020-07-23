@@ -182,8 +182,10 @@ public class OppsImpl {
 				+ "  as count from "+TABLE_NAME  ;
 				query = applyFilters(startDate, endDate, orgname, status, query);
 			query = query + " group by key order  by count desc limit 10";
+			
 			logger.info("by volume query >> "+query);
 			return jdbcTemplate.query(query, new OppsRowMapper());
+			
 	}
 
 
@@ -192,7 +194,6 @@ public class OppsImpl {
 	 * @param startDate
 	 * @param endDate
 	 * @param orgname
-	 * @param status
 	 * @param isexport
 	 * @return
 	 */
@@ -200,8 +201,13 @@ public class OppsImpl {
 		String query = " select classificationcode as key, count(*) as count from "+TABLE_NAME;
 				query = applyFilters(startDate, endDate, orgname, status, query);
 			query = query + " and length(classificationcode) > 0  group by classificationcode order  by count desc limit 10";
-			logger.info("by classification code query >> "+query);
-			return jdbcTemplate.query(query, new OppsRowMapper());
+			if(org.apache.commons.lang3.StringUtils.isNotBlank(isexport) && "Yes".equalsIgnoreCase(isexport)){
+				logger.info("by volume export query >> "+REPORT_QUERY + " and  classificationcode in ( select key from ( " + query + ") res ) " ); 
+				return jdbcTemplate.query(REPORT_QUERY + " and classificationcode in ( select key from ( " + query + " ) res ) limit 100 ", new OppsRowMapperExport());
+			} else {
+				logger.info("by classification code query >> "+query);
+				return jdbcTemplate.query(query, new OppsRowMapper());
+			}
 	}
 	
 	/**
@@ -217,8 +223,14 @@ public class OppsImpl {
 		String query = " select naicscode as key, count(*) as count from "+TABLE_NAME;
 				query = applyFilters(startDate, endDate, orgname, status, query);
 			query = query + " and length(naicscode) > 0  group by naicscode order  by count desc limit 10";
-			logger.info("by naics code query >> "+query);
-			return jdbcTemplate.query(query, new OppsRowMapper());
+			if(org.apache.commons.lang3.StringUtils.isNotBlank(isexport) && "Yes".equalsIgnoreCase(isexport)){
+				logger.info("by volume report query >> "+REPORT_QUERY + " and  key in ( select key from ( " + query + ") res ) " ); 
+				return jdbcTemplate.query(REPORT_QUERY + " and naicscode in ( select key from ( " + query + " ) res ) limit 100 ", new OppsRowMapperExport());
+			} else {
+				logger.info("by naics code query >> "+query);
+				return jdbcTemplate.query(query, new OppsRowMapper());
+			}
+			
 	}
 	
 	/**
@@ -234,8 +246,14 @@ public class OppsImpl {
 		String query = " select setasidecode as key, count(*) as count from "+TABLE_NAME ;
 		    query = applyFilters(startDate, endDate, orgname, status, query);
 			query = query + " and length(setasidecode) > 0  group by setasidecode order  by count desc limit 10";
-			logger.info("by setaside query >> "+query);
-			return jdbcTemplate.query(query, new OppsRowMapper());
+			if(org.apache.commons.lang3.StringUtils.isNotBlank(isexport) && "Yes".equalsIgnoreCase(isexport)){
+				logger.info("by volume report query >> "+REPORT_QUERY + " and  setasidecode in ( select key from ( " + query + ") res ) " ); 
+				return jdbcTemplate.query(REPORT_QUERY + " and setasidecode in ( select key from ( " + query + " ) res ) limit 100 ", new OppsRowMapperExport());
+			} else {
+				logger.info("by setaside query >> "+query);
+				return jdbcTemplate.query(query, new OppsRowMapper());
+			}
+			
 	}
 
 	/**
@@ -258,7 +276,7 @@ public class OppsImpl {
 				logger.info("by type  query >> "+query);
 			if(org.apache.commons.lang3.StringUtils.isNotBlank(isexport) && "Yes".equalsIgnoreCase(isexport)){
 				logger.info("by type report query >> "+REPORT_QUERY + " and type in ( select key from ( " + query + ") res ) " ); 
-				return jdbcTemplate.query(REPORT_QUERY + " and type in ( select key from ( " + query + " ) res ) limit 1000 ", new OppsRowMapperExport());
+				return jdbcTemplate.query(REPORT_QUERY + " and type in ( select key from ( " + query + " ) res ) limit 100 ", new OppsRowMapperExport());
 			} else {
 				return jdbcTemplate.query(query, new OppsRowMapper());
 			}
@@ -277,8 +295,13 @@ public class OppsImpl {
 		String query = " select EXTRACT(YEAR FROM posteddate::date) as key, count(*) as count from "+TABLE_NAME ;
 			query = applyFilters(startDate, endDate, orgname, status, query);
 			query = query + " group by key order  by key desc " ;
-			logger.info("by year query >> "+query);
-			return jdbcTemplate.query(query, new OppsRowMapper());
+			if(org.apache.commons.lang3.StringUtils.isNotBlank(isexport) && "Yes".equalsIgnoreCase(isexport)){
+				logger.info("by type report query >> "+REPORT_QUERY + " and  EXTRACT(YEAR FROM posteddate::date) in ( select key from ( " + query + ") res ) " ); 
+				return jdbcTemplate.query(REPORT_QUERY + " and  EXTRACT(YEAR FROM posteddate::date) in ( select key from ( " + query + " ) res ) limit 100 ", new OppsRowMapperExport());
+			} else {
+				logger.info("by year query >> "+query);
+				return jdbcTemplate.query(query, new OppsRowMapper());
+			}
 	}
 
 

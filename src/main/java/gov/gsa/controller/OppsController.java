@@ -71,7 +71,8 @@ public class OppsController {
 	public ResponseEntity<List<OppsData>> getOppsByVolume(@RequestParam(name="startDate",required=false) String startDate, 
 			  @RequestParam(name="endDate",required=false) String endDate,
 			  @RequestParam(name="orgname",required=false) String orgname,
-			  @RequestParam(name="status",required=false) String status,@RequestParam(name="export",required=false) String isexport )  {
+			  @RequestParam(name="status",required=false) String status,
+			  @RequestParam(name="export",required=false) String isexport )  {
 		List<OppsData> oppsbystatus = oppsService.getOppsByVolume(startDate,endDate,orgname,status,isexport);
 		return new ResponseEntity<List<OppsData>>(oppsbystatus, HttpStatus.OK);
 	}
